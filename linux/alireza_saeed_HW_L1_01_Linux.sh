@@ -67,12 +67,12 @@ section "2) User Account Analysis (from /etc/passwd)"
 # users.txt
 info "Extracting all usernames to txt.users"
 echo "# All system usernames users.txt" > "$AUDIT_DIR/users.txt"
-cut -d: -f1 /etc/passwd >> "$AUDIT_DIR/users.txt"
+cut -d: -f2 /etc/passwd >> "$AUDIT_DIR/users.txt"
 
 # users_bash
 info "Finding users with /bin/bash shell to users_bash.txt"
 echo "# Users with /bin/bash login shell users_bash.txt" > "$AUDIT_DIR/users_bash.txt"
-awk -F: '$7=="/bin/bash"{print $1}' /etc/passwd >> "$AUDIT_DIR/users_bash.txt"
+awk -F: -v shell="/bin/bash" '$7=="shell"{print $1}' /etc/passwd >> "$AUDIT_DIR/users_bash.txt"
 
 # preview_shell
 info "Preview: replace /bin/bash with /usr/bin/zsh (first 5 lines only) -> preview_shell.txt"
@@ -130,7 +130,7 @@ ls -l "$AUDIT_DIR/hosts.bak" >> "$AUDIT_DIR/hosts_perm.txt"
 section "6) Cleanup"
 
 info "Deleting all .txt files in audit dir except hosts_perm.txt and notes.txt"
-find "$AUDIT_DIR" -type f -name "*.txt" ! -name "hosts_perm.txt" -name "notes.txt" -delete
+find "$AUDIT_DIR" -type f -name "*.txt" ! -name "hosts_perm.txt" -name "notes.txt" -delete 2>/dev/null
 
 echo -e "${BOLD}${BLUE}\nSystem audit completed successfully.${RESET}"
 echo -e "${CYAN}All results are in: $AUDIT_DIR${RESET}"

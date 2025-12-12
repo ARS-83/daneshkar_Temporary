@@ -105,9 +105,6 @@ class PasswordValidator:
         return is_modified
 
 
-
-
-
 if __name__ == "__main__":
     print("""
 --- gol baray gol ---

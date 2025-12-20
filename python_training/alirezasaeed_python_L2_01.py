@@ -114,13 +114,11 @@ class PasswordValidator:
         """
         is_modified = False
         new_password = self.password
-
         for letter, substitutes in self._letter_like_characters.items():
             if is_modified:
                 break
 
             for sub in substitutes:
-
                 new_password = new_password.replace(sub, letter)
                 if self.username == new_password:
                     is_modified = True

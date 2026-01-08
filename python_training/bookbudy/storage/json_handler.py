@@ -8,7 +8,6 @@ from configs.logger import logger
 from models.reading_log import ReadingLog
 
 
-
 class JsonHandlerException(Exception):
     pass
 
@@ -18,28 +17,33 @@ class JsonHandler(object):
         self.basedir.mkdir(exist_ok=True)
 
     def save(self, data: Dict) -> None:
-        res = Dict(books=list(), logs=list())
+        res = dict(books=list(), logs=list())
         try:
             res['books'] = [book.__dict__ for book in data['books']]
             res['logs'] = [log.__dict__ for log in data["logs"]]
-
-            with open(self.basedir, "w", encoding="utf-8") as f:
-                res = json.dump(res)
+            file_path = self.basedir / "data.json"
+            logger.info("{}".format(str(res)))
+            with open(file_path, "w", encoding="utf-8") as f:
+                res = json.dumps(res)
                 f.write(res)
 
         except KeyError:
             raise JsonHandlerException("Have bad data")
 
-        except FileNotFoundError:
-            raise JsonHandlerException("Error when finding for saVE")
+        except Exception as e:
+            raise JsonHandlerException("Error while export date {}".format(str(e)))
 
-    def load(self, filename: str) -> None:
+    def load(self, filename: str) -> Dict:
         data = dict()
         res = dict(books=list(), logs=list())
-        with open(filename, "r", encoding='utf-8') as f:
-            data = json.loads(f.read())
+        try:
+            with open(filename, "r", encoding="utf-8") as f:
+                data = json.load(f)
 
-        if hasattr(data, "books"):
+        except Exception as e:
+            raise JsonHandlerException(f"Error loading JSON: {e}")
+
+        if "books" in data:
             for book in data["books"]:
                 if 'file_size' in book.keys():
                     res['books'].append(Ebook(**book))
@@ -47,13 +51,12 @@ class JsonHandler(object):
                 elif 'narrator' in book.keys():
                     res['books'].append(Audiobook(**book))
 
-                else: res['book'].append(Book(**book))
+                else: res['books'].append(Book(**book))
 
-        else:
-            raise JsonHandlerException("No book loaded.")
-
-        if hasattr(data, "logs"):
+        if "logs" in data:
             for log in data["logs"]:
                 res['logs'].append(ReadingLog(**log))
+
+        return res
 
 

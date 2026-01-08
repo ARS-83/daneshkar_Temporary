@@ -1,12 +1,12 @@
-from reading_tracker import ReadingTracker
+from .reading_tracker import ReadingTracker
 from models.book import Book
-from typing import Dict, List
+from typing import Dict, List, Any
 
 class ProgressManager:
     def __init__(self, tracker: ReadingTracker):
         self.tracker = tracker
 
-    def calculate_pages(self, book:Book) -> Dict[str, float, bool]:
+    def calculate_pages(self, book:Book) -> Dict[str, Any]:
         result = self.tracker.get_book_read_log(book.title)
         page_read = sum(r.book_page for r in result)
 

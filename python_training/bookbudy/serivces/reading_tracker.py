@@ -1,4 +1,4 @@
-from python_training.bookbudy.utils import decorators
+from utils import decorators
 from models.reading_log import ReadingLog
 from typing import List
 

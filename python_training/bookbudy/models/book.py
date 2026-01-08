@@ -1,15 +1,18 @@
 #  Book Object
 from datetime import datetime
 
+class BookError:
+    pass
+
 class Book:
     counter = 0
 
-    def __init__(self, title: str, author: str, genre: str, pages: int, date_added: datetime):
+    def __init__(self, title: str, author: str, genre: str, pages: int, date_added: datetime, is_ended: bool=False):
         self.title = title
         self.author = author
         self.genre = genre
         self.pages = pages
-        self.date_added = date_added
+        self.date_added = date_added.strftime("%d-%m-%Y,  %H:%M:%S") if type(date_added) is datetime else date_added
         self.is_ended = False
         Book.counter += 1
 
